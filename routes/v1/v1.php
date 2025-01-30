@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\v1\Export\PdfController;
 use App\Http\Controllers\v1\Auth\LoginController;
 use App\Http\Controllers\v1\Auth\LogOutController;
 use App\Http\Controllers\v1\DashBoard\DashboardController;
 use App\Http\Controllers\v1\Employee\RegisterEmployeeController;
 use App\Http\Controllers\v1\Employee\ShowEmployeeController;
 use App\Http\Controllers\v1\Employee\UpdateEmployeeController;
+use App\Http\Controllers\v1\Export\ExportCsvController;
 use App\Http\Controllers\v1\HourSession\DeleteHourSession\DeleteHourSessionController;
 use App\Http\Controllers\v1\HourSession\RegisterHourSession\RegitsterHourSessionController;
 use App\Http\Controllers\v1\HourSession\ShowHourSession\ShowHourSessionController;
@@ -40,6 +42,8 @@ Route::middleware(['ip_block', 'throttle:global', 'jwt.auth', 'token_redis', 'ro
 
     //Salary Routes
     Route::get('/salary', ShowSalaryByMonthController::class)->name('show_salary_by_month');
+    Route::post('/export/csv', ExportCsvController::class)->name('export_csv');
+    Route::get('/export/pdf', PdfController::class)->name('export_pdf');
     //Logout
     Route::post('/logout', LogOutController::class)->name('logout');
 
