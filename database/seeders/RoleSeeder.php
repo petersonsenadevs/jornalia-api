@@ -13,6 +13,9 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::create(['id' => Str::uuid(), 'name' => 'employee']);
+        if (!Role::where('name', 'employee')->exists()) {
+            Role::create(['id' => Str::uuid(), 'name' => 'employee']);
+        }
+       echo "RoleSeeder has been executed\n";
     }
 }

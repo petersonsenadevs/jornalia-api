@@ -41,6 +41,9 @@ class HourWorkedUpdateService
             if ($hourWorkeed->holiday_hours != null) {
                 $hourWorkeed->holiday_hours = $hoursList['holidayHours'];
             }
+            if ($hourWorkeed->night_hours != null) {
+                $hourWorkeed->night_hours = $hoursList['nightHours'];
+            }
             $hourWorkeed->save();
         });
 

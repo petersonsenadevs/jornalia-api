@@ -1,0 +1,91 @@
+services:
+  app:
+    build: .
+    container_name: jornalia_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=jornalia
+      - DB_USERNAME=root
+      - DB_PASSWORD=secret
+      - REDIS_HOST=redis
+      - CACHE_DRIVER= redis
+      - QUEUE_CONNECTION=redis
+      - SESSION_DRIVER redis
+      - MAIL_MAILER= smtp
+      - MAIL_HOST= smtp-relay.brevo.com
+      - MAIL_PORT:=587
+      - MAIL_USERNAME=user@example.com
+      - MAIL_PASSWORD=yourpassword
+      - MAIL_ENCRYPTION= tls
+    networks:
+      - jornalia_network
+    depends_on:
+      - mysql
+      - redis
+    expose:
+      - "9000" # Expone el puerto interno para que Nginx lo use
+
+  nginx:
+    image: nginx:alpine
+    container_name: jornalia_nginx
+    restart: unless-stopped
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - .:/var/www/html
+    ports:
+      - "80:80"
+    networks:
+      - jornalia_network
+    depends_on:
+      - app
+
+  mysql:
+    image: mysql:8.0
+    container_name: jornalia_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: jornalia
+      MYSQL_USER: jornalia
+      MYSQL_PASSWORD: secret
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - jornalia_network
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: jornalia_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: secret
+    ports:
+      - "8080:80" # PhpMyAdmin estará disponible en http://localhost:8080
+    depends_on:
+      - mysql
+    networks:
+      - jornalia_network
+
+  redis:
+    image: redis:alpine
+    container_name: jornalia_redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - jornalia_network
+  
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  jornalia_network:
+    driver: bridge
