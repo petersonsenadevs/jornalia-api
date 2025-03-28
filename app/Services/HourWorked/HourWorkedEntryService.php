@@ -23,13 +23,15 @@ class HourWorkedEntryService
         $this->validateTimeEntry($startTime, $endTime);
         
         $hoursList = $this->calculate($startTime, $endTime, $plannedHours, $workType);
+        $night_hours = $hoursList['nightHours'];
 
-        DB::transaction(function () use ($hourSessionId, $hoursList) {
+        DB::transaction(function () use ($hourSessionId, $hoursList, $workType, $night_hours) {
             HourWorked::create([
                 'hour_session_id' => $hourSessionId,
                 'normal_hours' => $hoursList['normalHours'],
                 'overtime_hours' => $hoursList['overtimeHours'],
                 'holiday_hours' => $hoursList['holidayHours'],
+                'night_hours' => $night_hours,
             ]);
         });
 

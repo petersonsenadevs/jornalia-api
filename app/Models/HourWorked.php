@@ -16,6 +16,7 @@ class HourWorked extends Model
         'normal_hours',
         'overtime_hours',
         'holiday_hours',
+        'night_hours',
     ];
 
     protected $table = 'hours_worked';
