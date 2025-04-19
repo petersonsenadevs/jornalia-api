@@ -27,12 +27,13 @@ class UpdateEmployeeService
         ?string $company,
         ?float $normalHourlyRate,
         ?float $overtimeHourlyRate,
+        ?float $nightHourlyRate,
         ?float $holidayHourlyRate,
         ?float $irpf,
         Employee $employee): array
     {
 
-        DB::transaction(function () use ($employee, $name, $company, $normalHourlyRate, $overtimeHourlyRate, $holidayHourlyRate, $irpf): void {
+        DB::transaction(function () use ($employee, $name, $company, $normalHourlyRate, $overtimeHourlyRate, $nightHourlyRate, $holidayHourlyRate, $irpf): void {
 
             if ($name != null) {
                 $employee->name = $name;
@@ -48,6 +49,10 @@ class UpdateEmployeeService
 
             if ($overtimeHourlyRate != null) {
                 $employee->overtime_hourly_rate = $overtimeHourlyRate;
+            }
+
+            if ($nightHourlyRate != null) {
+                $employee->night_hourly_rate = $nightHourlyRate;
             }
 
             if ($holidayHourlyRate != null) {

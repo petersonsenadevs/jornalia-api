@@ -23,7 +23,7 @@ class RegisterEmployeeService
      */
     public function execute(array $data): void
     {
-
+var_dump($data);
         DB::transaction(function () use ($data): void {
 
             $user = $this->registerUserService->execute($data['user']['email'], $data['user']['password']);
@@ -33,6 +33,7 @@ class RegisterEmployeeService
                 'company_name' => $data['company_name'],
                 'normal_hourly_rate' => $data['normal_hourly_rate'],
                 'overtime_hourly_rate' => $data['overtime_hourly_rate'],
+                'night_hourly_rate' => $data['night_hourly_rate'],
                 'holiday_hourly_rate' => $data['holiday_hourly_rate'],
                 'irpf' => $data['irpf'],
             ]);
