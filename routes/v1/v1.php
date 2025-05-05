@@ -48,7 +48,7 @@ Route::middleware(['ip_block', 'throttle:global', 'jwt.auth', 'token_redis', 'ro
 
     //Salary Routes
     Route::get('/salary', ShowSalaryByMonthController::class)->name('show_salary_by_month');
-    Route::post('/export/csv', HourSessionExportCsvController::class)->name('export_csv');
+    Route::get('/export/csv', HourSessionExportCsvController::class)->name('export_csv');
     Route::get('/export/pdf', HourSessionPdfExportController::class)->name('export_pdf');
     //Logout
     Route::post('/logout', LogOutController::class)->name('logout');
