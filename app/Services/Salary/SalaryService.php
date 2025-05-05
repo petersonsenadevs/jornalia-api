@@ -22,11 +22,11 @@ class SalaryService implements SalaryServiceInterface
         $prepareDate = $this->prepareDate($date);
 
         $hourWorkedCollection = $this->prepareHourWorkedCollection($employee, $prepareDate['startOfMonth'], $prepareDate['endOfMonth']);
+      
 
         $salary = $this->prepareSalary($employeeId, $prepareDate['startOfMonth'], $prepareDate['endOfMonth']);
 
         $dataSalary = $this->calculateSalary($hourWorkedCollection, $employee);
-        var_dump($dataSalary);
 
         DB::transaction(function () use ($salary, $dataSalary, $employeeId, $prepareDate) {
             $salary ? $this->updateSalary($salary, $dataSalary) : $this->createNewSalary($employeeId, $prepareDate, $dataSalary);

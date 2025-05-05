@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Employee;
 
 use App\Jobs\SendRegisterNotification;
+use App\Mail\RegisterNotification;
 use App\Models\User;
 use App\Services\User\RegisterUserService;
 use Exception;
@@ -13,19 +14,13 @@ use Illuminate\Support\Facades\Log;
 
 class RegisterEmployeeService
 {
-    /**
-     * Summary of __construct
-     */
-    public function __construct(private RegisterUserService $registerUserService) {}
+    public function __construct(
+        private readonly RegisterUserService $registerUserService,
+    ) {}
 
-    /**
-     * Summary of execute
-     */
     public function execute(array $data): void
     {
-var_dump($data);
         DB::transaction(function () use ($data): void {
-
             $user = $this->registerUserService->execute($data['user']['email'], $data['user']['password']);
 
             $user->employee()->create([
@@ -37,6 +32,7 @@ var_dump($data);
                 'holiday_hourly_rate' => $data['holiday_hourly_rate'],
                 'irpf' => $data['irpf'],
             ]);
+
             DB::afterCommit(function () use ($user) {
                 $user->assignRole('employee');
                 $this->sendRegisterNotification($user);
@@ -44,15 +40,19 @@ var_dump($data);
         });
     }
 
-    /**
-     * Summary of sendRegisterNotification
-     */
     private function sendRegisterNotification(User $user): void
     {
         try {
-            SendRegisterNotification::dispatch($user);
+           SendRegisterNotification::dispatch($user);
+            Log::info('Notificación de registro enviada', [
+                'user_id' => $user->id,
+                'email' => $user->email
+            ]);
         } catch (Exception $e) {
-            Log::error($e->getMessage());
+            Log::error('Error al enviar notificación de registro', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->id
+            ]);
         }
     }
 }
