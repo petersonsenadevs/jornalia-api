@@ -1,60 +1,58 @@
 <?php
-
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Attachment;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 
 class HourWorkedReport extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
     public function __construct(
-        private string $pdfContent,
-        private string $filename,
-        private int $month,
-        private int $year
-    ) {}
+        private readonly string $filename,
+        private readonly int $month,
+        private readonly int $year
+    ) {
+        // Verificar que el archivo existe antes de continuar
+        if (!Storage::exists("temp/{$this->filename}")) {
+            throw new \RuntimeException("El archivo temporal no existe: {$this->filename}");
+        }
+    }
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "Reporte de Horas Trabajadas - {$this->month}/{$this->year}",
+            subject: "Reporte de Horas Trabajadas - {$this->month}/{$this->year}"
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
             view: 'emails.hour_worked_report',
+            with: [
+                'month' => $this->month,
+                'year' => $this->year
+            ]
         );
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
     public function attachments(): array
     {
+        // Verificar que el archivo existe en el storage
+        if (!Storage::exists("temp/{$this->filename}")) {
+            throw new \RuntimeException("El archivo temporal no existe: {$this->filename}");
+        }
+
         return [
-            Attachment::fromData(
-                fn () => $this->pdfContent,
-                $this->filename
-            )->withMime('application/pdf'),
+            Attachment::fromStorage("temp/{$this->filename}")
+                ->as($this->filename)
+                ->withMime('application/pdf')
         ];
     }
 }

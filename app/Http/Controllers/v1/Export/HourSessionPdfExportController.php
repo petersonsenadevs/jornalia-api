@@ -2,22 +2,27 @@
 
 namespace App\Http\Controllers\v1\Export;
 
+use App\Exceptions\PdfGenerateException;
+use App\Exceptions\SalaryNotFoundException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ExportRequest;
 use App\Services\Export\PdfExportService;
-use Illuminate\Http\Request;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
-class PdfController extends Controller
+class HourSessionPdfExportController extends Controller
 {
     public function __construct(
         private PdfExportService $pdfExportService
     ) {}
 
-    public function __invoke(Request $request)
+    public function __invoke(ExportRequest $request)
     {
-        try {
+      
             $month = $request->query('month');
             $year = $request->query('year');
-            $sendEmail = $request->query('send_email', false);
+            $sendEmail = filter_var($request->query('send_email', false), FILTER_VALIDATE_BOOLEAN);
+
+            try {
 
             $result = $this->pdfExportService->generatePdf(
                 $request->user()->employee,
@@ -30,11 +35,8 @@ class PdfController extends Controller
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'attachment; filename="' . $result['filename'] . '"');
 
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Error al generar el PDF',
-                'details' => $e->getMessage()
-            ], 500);
+        } catch (SalaryNotFoundException| PdfGenerateException | \Exception $e) {
+            throw new HttpResponseException(response()->json(['error' => $e->getMessage()],$e->getCode()));
         }
     }
 }
