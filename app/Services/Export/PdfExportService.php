@@ -200,7 +200,7 @@ class PdfExportService
     private function generatePdfContent(array $data): string
     {
         $htmlContent = view('exports.hourworked_pdf', $data)->render();
-        $pdfshiftApiKey = 'sk_b2a85309c894df62be2638beb3abb7bd1ef644a6';
+        $pdfshiftApiKey = env('PDFSHIFT_API_KEY');
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
         ])->withBasicAuth('api', $pdfshiftApiKey)
