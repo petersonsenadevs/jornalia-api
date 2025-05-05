@@ -163,10 +163,10 @@ class PdfExportService
             $formattedHourSessions = $hourSessions->map(function ($session) {
                 return [
                     'date' => $session['date'],
-                    'normal_hours' => $session['normal_hours'] ? $this->convertDecimalToHoursAndMinutes($session['normal_hours']) : null,
-                    'overtime_hours' => $session['overtime_hours'] ? $this->convertDecimalToHoursAndMinutes($session['overtime_hours']) : null,
-                    'holiday_hours' => $session['holiday_hours'] ? $this->convertDecimalToHoursAndMinutes($session['holiday_hours']) : null,
-                    'night_hours' => $session['night_hours'] ? $this->convertDecimalToHoursAndMinutes($session['night_hours']) : null,
+                    'normal_hours' => $session['normal_hours'] ? $this->convertDecimalToHoursAndMinutes((float)$session['normal_hours']) : null,
+                    'overtime_hours' => $session['overtime_hours'] ? $this->convertDecimalToHoursAndMinutes((float)$session['overtime_hours']) : null,
+                    'holiday_hours' => $session['holiday_hours'] ? $this->convertDecimalToHoursAndMinutes((float)$session['holiday_hours']) : null,
+                    'night_hours' => $session['night_hours'] ? $this->convertDecimalToHoursAndMinutes((float)$session['night_hours']) : null,
                 ];
             });
 
