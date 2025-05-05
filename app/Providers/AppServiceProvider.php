@@ -18,10 +18,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(SalaryServiceInterface::class, SalaryService::class);
-        $this->app->singleton(RedisService::class, function () {
-
-            return new RedisService;
-        });
+        
     }
 
     /**

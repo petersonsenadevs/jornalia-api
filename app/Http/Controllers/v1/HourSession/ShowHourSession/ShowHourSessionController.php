@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\v1\HourSession\ShowHourSession;
 
 use App\Exceptions\HourSessionNotFoundException;
+use App\Http\Requests\ShowHourSessionRequest;
 use App\Services\HourSession\FindHourSessionService;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
@@ -24,7 +25,7 @@ class ShowHourSessionController
      *
      * @throws \Illuminate\Http\Exceptions\HttpResponseException
      */
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(ShowHourSessionRequest $request): JsonResponse
     {
         try {
             $query = $request->query('date');

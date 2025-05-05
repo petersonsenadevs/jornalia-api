@@ -14,6 +14,7 @@ class Employee extends Model
         'name',
         'normal_hourly_rate',
         'overtime_hourly_rate',
+        'night_hourly_rate',
         'holiday_hourly_rate',
         'company_name',
         'user_id',
